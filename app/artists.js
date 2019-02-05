@@ -21,7 +21,7 @@ const upload = multer({storage});
 const router = express.Router();
 
 router.get("/", (req, res) => {
-    Product.find()
+    Artists.find()
         .then( results => res.send(results))
         .catch(e => res.send(e).status(500))
 });
@@ -32,7 +32,7 @@ router.post("/", upload.single("image"), (req, res) => {
 
     try {
         const artist = new Artists(artistData);
-        product.save().then(() => res.send(artistData))
+        artist.save().then(() => res.send(artistData))
     }catch (e) {
         res.send(e).status(500)
     }

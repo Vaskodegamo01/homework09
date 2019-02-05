@@ -20,8 +20,8 @@ app.use(express.static('public'));
 app.use(express.json());
 
 db.once('open', () => {
-    app.use('/artists', artist());
-    app.use('/albums', album());
+    app.use('/artists', artist);
+    app.use('/albums', album);
     app.use('/tracks', track());
     app.listen(port, () => console.log(`Server started on ${port}`));
 });
