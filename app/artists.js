@@ -29,13 +29,11 @@ router.get("/", (req, res) => {
 router.post("/", upload.single("image"), (req, res) => {
     const artistData = req.body;
     if (req.file) artistData.image = req.file.filename;
+    const artist = new Artists(artistData);
+    artist.save()
+        .then( () => res.send(artistData))
+        .catch(e => res.send(e).status(500))
 
-    try {
-        const artist = new Artists(artistData);
-        artist.save().then(() => res.send(artistData))
-    }catch (e) {
-        res.send(e).status(500)
-    }
 });
 
 module.exports = router;

@@ -23,7 +23,7 @@ const router = express.Router();
 
 router.get("/", (req, res) => {
     if(req.query.artist){
-        Albums.findOne({artist : req.query.artist})
+        Albums.find({artist : req.query.artist})
             .then( results => res.send(results))
             .catch(e => res.send(e).status(500))
     }else{
@@ -34,8 +34,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/:id", (req, res) => {
-    console.log(req.params);
-    Albums.findOne({_id : req.params.id}).populate('Artist')
+    Albums.findOne({_id : req.params.id}).populate('artist')
         .then( results => res.send(results))
         .catch(e => res.send(e).status(500))
 });
@@ -43,14 +42,16 @@ router.get("/:id", (req, res) => {
 router.post("/", upload.single("image"), async (req, res) => {
     const albumData = req.body;
     if (req.file) albumData.image = req.file.filename;
-    const artist = await  Artists.findOne({name : albumData.artist});
-    albumData.artist = artist;
-    try {
-        const albums = new Albums(albumData);
-        albums.save().then(() => res.send(albumData))
-    }catch (e) {
-        res.send(e).status(500)
-    }
+
+    await  Artists.findOne({name : albumData.artist})
+        .then( results =>  albumData.artist = results)
+        .catch(e => res.send(e).status(500));
+
+    const albums = new Albums(albumData);
+    albums.save()
+        .then( () => res.send(albumData))
+        .catch(e => res.send(e).status(500))
+
 });
 
 module.exports = router;
